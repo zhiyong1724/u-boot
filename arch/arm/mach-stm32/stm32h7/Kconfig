@@ -9,8 +9,11 @@ config TARGET_STM32H743_EVAL
 config TARGET_STM32H750_ART_PI
 	bool "STM32H750 ART Pi board"
 
+config TARGET_STM32H750_NAND
+	bool "STM32H750 Nand board"
+
 source "board/st/stm32h743-eval/Kconfig"
 source "board/st/stm32h743-disco/Kconfig"
 source "board/st/stm32h750-art-pi/Kconfig"
-
+source "board/st/stm32h750-nand/Kconfig"
 endif

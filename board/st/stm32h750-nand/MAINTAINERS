@@ -1,0 +1,7 @@
+STM32H750 NAND BOARD
+M:	CHENZHIYONG <172471067@qq.com>
+S:	Maintained
+F:	board/st/stm32h750-nand
+F:	include/configs/stm32h750-nand.h
+F:	configs/stm32h750_nand_defconfig
+F:	arch/arm/dts/stm32h7*
