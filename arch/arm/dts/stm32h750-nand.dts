@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0+ OR X11
 /*
- * Copyright 2021 - Dillon Min <dillon.minfei@gmail.com>
+ * Copyright 2023 - CHENZHIYONG <172471067@qq.com>
  *
  */
 
@@ -11,17 +11,17 @@
 #include <dt-bindings/gpio/gpio.h>
 
 / {
-	model = "RT-Thread STM32H750i-ART-PI board";
-	compatible = "st,stm32h750i-art-pi", "st,stm32h750";
+	model = "STM32H750-NAND board";
+	compatible = "st,stm32h750-nand", "st,stm32h750";
 
 	chosen {
 		bootargs = "root=/dev/ram";
-		stdout-path = "serial0:2000000n8";
+		stdout-path = "serial0:921600n8";
 	};
 
 	memory@c0000000 {
 		device_type = "memory";
-		reg = <0xc0000000 0x2000000>;
+		reg = <0xc0000000 0x4000000>;
 	};
 
 	reserved-memory {
@@ -38,7 +38,7 @@
 	};
 
 	aliases {
-		serial0 = &uart4;
+		serial0 = &usart1;
 		serial1 = &usart3;
 	};
 
@@ -155,6 +155,25 @@
 			reg = <0 0x1000000>;
 		};
 	};
+};
+
+&usart1_pins {
+		pins1 {
+			pinmux = <STM32_PINMUX('A', 9, AF7)>; /* USART1_TX */
+			bias-disable;
+			drive-push-pull;
+			slew-rate = <0>;
+		};
+		pins2 {
+			pinmux = <STM32_PINMUX('A', 10, AF7)>; /* USART1_RX */
+			bias-disable;
+		};
+	};
+
+&usart1 {
+	pinctrl-0 = <&usart1_pins>;
+	pinctrl-names = "default";
+	status = "okay";
 };
 
 &usart2 {
