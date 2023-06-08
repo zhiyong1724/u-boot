@@ -11,7 +11,6 @@
 #include <asm/global_data.h>
 
 DECLARE_GLOBAL_DATA_PTR;
-
 int dram_init(void)
 {
 	struct udevice *dev;
@@ -25,7 +24,6 @@ int dram_init(void)
 
 	if (fdtdec_setup_mem_size_base() != 0)
 		ret = -EINVAL;
-
 	return ret;
 }
 

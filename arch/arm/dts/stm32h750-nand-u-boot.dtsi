@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0+
 
 #include <stm32h7-u-boot.dtsi>
-
 &fmc {
 	/*
 	 * Memory configuration from sdram datasheet W9825G6KH
@@ -29,7 +28,7 @@
 };
 
 &pinctrl {
-	fmc_pins: fmc@0 {
+	fmc_pins: fmc@52004000 {
 		pins {
 			pinmux = <STM32_PINMUX('C', 0, AF12)>,
 			<STM32_PINMUX('C', 2, AF12)>,
@@ -96,6 +95,23 @@
 			<STM32_PINMUX('I', 10, AF12)>;
 
 			slew-rate = <3>;
+		};
+	};
+
+	spi2_pins: spi2-0 {
+		pins1 {
+			pinmux = <STM32_PINMUX('B', 13, AF5)>,
+				/* SPI2_CLK */
+				 <STM32_PINMUX('B', 15, AF5)>;
+				/* SPI2_MOSI */
+			bias-disable;
+			drive-push-pull;
+			slew-rate = <2>;
+		};
+		pins2 {
+			pinmux = <STM32_PINMUX('B', 14, AF5)>;
+				/* SPI2_MISO */
+			bias-disable;
 		};
 	};
 };

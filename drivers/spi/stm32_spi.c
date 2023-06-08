@@ -412,7 +412,7 @@ static int stm32_spi_xfer(struct udevice *slave, unsigned int bitlen,
 
 	slave_plat = dev_get_parent_plat(slave);
 	if (flags & SPI_XFER_BEGIN)
-		stm32_spi_set_cs(bus, slave_plat->cs, false);
+		stm32_spi_set_cs(bus, slave_plat->cs, true);
 
 	/* Be sure to have data in fifo before starting data transfer */
 	if (priv->tx_buf)
@@ -463,7 +463,7 @@ static int stm32_spi_xfer(struct udevice *slave, unsigned int bitlen,
 	stm32_spi_stopxfer(bus);
 
 	if (flags & SPI_XFER_END)
-		stm32_spi_set_cs(bus, slave_plat->cs, true);
+		stm32_spi_set_cs(bus, slave_plat->cs, false);
 
 	return xfer_status;
 }

@@ -14,7 +14,7 @@
 #define CONFIG_SYS_BOOTMAPSZ		(SZ_16M + SZ_8M)
 
 #define CONFIG_SYS_FLASH_BASE		0x90000000
-#define CONFIG_SYS_INIT_SP_ADDR		0x24080000
+#define CONFIG_SYS_INIT_SP_ADDR		0x20020000
 
 /*
  * Configuration of the external SDRAM memory
@@ -30,19 +30,35 @@
 #define CONFIG_REVISION_TAG
 
 #define CONFIG_SYS_MAXARGS		16
-#define CONFIG_SYS_MALLOC_LEN		(1 * 1024 * 1024)
+#define CONFIG_SYS_MALLOC_LEN		(256 * 1024)
 
 #define BOOT_TARGET_DEVICES(func) \
 	func(MMC, mmc, 0)
 
-#include <config_distro_bootcmd.h>
+#define CONFIG_SYS_MAX_NAND_DEVICE	1
+#define CONFIG_SYS_NAND_BASE 0x90000000
+#define CONFIG_BOOTCOMMAND \
+	"sf probe; " \
+	"setenv temp 0x00000000; " \
+	"setenv load_base_addr 0xc0000000; " \
+	"setenv offset 0x00000000; " \
+	"while itest ${offset} < 0x00100000; " \
+	"do " \
+	"setexpr offset ${offset} + 0x8000; " \
+	"setexpr temp ${load_base_addr} + ${offset}; " \
+	"sf read ${temp} ${offset} 0x8000; " \
+	"done; " \
+	"setexpr temp ${load_base_addr} + 4; " \
+	"go ${temp}; " \
+
+/* #include <config_distro_bootcmd.h>
 #define CONFIG_EXTRA_ENV_SETTINGS				\
 			"kernel_addr_r=0xC0008000\0"		\
-			"fdtfile=stm32h750i-art-pi.dtb\0"	\
+			"fdtfile=stm32h750-nand.dtb\0"	\
 			"fdt_addr_r=0xC0408000\0"		\
 			"scriptaddr=0xC0418000\0"		\
 			"pxefile_addr_r=0xC0428000\0" \
 			"ramdisk_addr_r=0xC0438000\0"		\
-			BOOTENV
+			BOOTENV */
 
 #endif /* __CONFIG_H */
