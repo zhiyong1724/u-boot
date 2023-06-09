@@ -39,17 +39,16 @@
 #define CONFIG_SYS_NAND_BASE 0x90000000
 #define CONFIG_BOOTCOMMAND \
 	"sf probe; " \
-	"setenv temp 0x00000000; " \
-	"setenv load_base_addr 0xc0000000; " \
+	"setenv temp 0; " \
+	"setenv load_base_addr 0x24000000; " \
 	"setenv offset 0x00000000; " \
-	"while itest ${offset} < 0x00100000; " \
+	"while itest ${offset} < 0x80000; " \
 	"do " \
-	"setexpr offset ${offset} + 0x8000; " \
 	"setexpr temp ${load_base_addr} + ${offset}; " \
 	"sf read ${temp} ${offset} 0x8000; " \
+	"setexpr offset ${offset} + 0x8000; " \
 	"done; " \
-	"setexpr temp ${load_base_addr} + 4; " \
-	"go ${temp}; " \
+	"go ${load_base_addr}; " \
 
 /* #include <config_distro_bootcmd.h>
 #define CONFIG_EXTRA_ENV_SETTINGS				\
