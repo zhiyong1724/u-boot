@@ -9,7 +9,7 @@
 #include <init.h>
 #include <log.h>
 #include <asm/global_data.h>
-
+#include <asm/armv7_mpu.h>
 DECLARE_GLOBAL_DATA_PTR;
 int dram_init(void)
 {
@@ -52,5 +52,33 @@ int board_late_init(void)
 int board_init(void)
 {
 	gd->bd->bi_boot_params = gd->bd->bi_dram[0].start + 0x100;
+	return 0;
+}
+
+int mach_cpu_init(void)
+{
+	int i;
+
+	struct mpu_region_config stm32_region_config[] = {
+		/*
+		 * Make SDRAM area cacheable & executable.
+		 */
+		{ 0x20000000, REGION_0, XN_DIS, PRIV_RW_USR_RW,
+		O_I_NON_CACHEABLE, REGION_512MB },
+
+		{ 0x40000000, REGION_1, XN_DIS, PRIV_RW_USR_RW,
+		DEVICE_NON_SHARED, REGION_512MB },
+
+		{ 0x80000000, REGION_2, XN_DIS, PRIV_RW_USR_RW,
+		DEVICE_NON_SHARED, REGION_256MB },
+
+		{ 0xC0000000, REGION_3, XN_DIS, PRIV_RW_USR_RW,
+		O_I_WB_RD_WR_ALLOC, REGION_512MB },
+	};
+
+	disable_mpu();
+	for (i = 0; i < ARRAY_SIZE(stm32_region_config); i++)
+		mpu_config(&stm32_region_config[i]);
+	enable_mpu();
 	return 0;
 }

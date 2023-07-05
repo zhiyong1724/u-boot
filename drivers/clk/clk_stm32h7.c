@@ -75,28 +75,35 @@
 #define RCC_D1CFGR_HPRE_MASK		GENMASK(3, 0)
 #define RCC_D1CFGR_HPRE_DIVIDED		BIT(3)
 #define RCC_D1CFGR_HPRE_DIVIDER		GENMASK(2, 0)
-
 #define RCC_D1CFGR_HPRE_DIV2		8
 
+#define RCC_D1CFGR_D1PPRE_MASK		GENMASK(6, 4)
 #define RCC_D1CFGR_D1PPRE_SHIFT		4
 #define RCC_D1CFGR_D1PPRE_DIVIDED	BIT(6)
 #define RCC_D1CFGR_D1PPRE_DIVIDER	GENMASK(5, 4)
+#define RCC_D1CFGR_D1PPRE_DIV2		40
 
 #define RCC_D1CFGR_D1CPRE_SHIFT		8
 #define RCC_D1CFGR_D1CPRE_DIVIDER	GENMASK(10, 8)
 #define RCC_D1CFGR_D1CPRE_DIVIDED	BIT(11)
 
+#define RCC_D2CFGR_D2PPRE1_MASK		GENMASK(6, 4)
 #define RCC_D2CFGR_D2PPRE1_SHIFT	4
 #define RCC_D2CFGR_D2PPRE1_DIVIDED	BIT(6)
 #define RCC_D2CFGR_D2PPRE1_DIVIDER	GENMASK(5, 4)
+#define RCC_D2CFGR_D2PPRE1_DIV2		40
 
+#define RCC_D2CFGR_D2PPRE2_MASK		GENMASK(10, 8)
 #define RCC_D2CFGR_D2PPRE2_SHIFT	8
 #define RCC_D2CFGR_D2PPRE2_DIVIDED	BIT(10)
 #define RCC_D2CFGR_D2PPRE2_DIVIDER	GENMASK(9, 8)
+#define RCC_D2CFGR_D2PPRE2_DIV2		400
 
+#define RCC_D3CFGR_D3PPRE_MASK		GENMASK(6, 4)
 #define RCC_D3CFGR_D3PPRE_SHIFT		4
 #define RCC_D3CFGR_D3PPRE_DIVIDED	BIT(6)
 #define RCC_D3CFGR_D3PPRE_DIVIDER	GENMASK(5, 4)
+#define RCC_D3CFGR_D3PPRE_DIV2		40
 
 #define RCC_D1CCIPR_FMCSRC_MASK		GENMASK(1, 0)
 #define		FMCSRC_HCLKD1		0
@@ -331,12 +338,12 @@ struct pll_psc {
 
 /*
  * OSC_HSE = 25 MHz
- * VCO = 500MHz
- * pll1_p = 250MHz / pll1_q = 250MHz pll1_r = 250Mhz
+ * VCO = 960MHz
+ * pll1_p = 480MHz / pll1_q = 480MHz pll1_r = 480Mhz
  */
 struct pll_psc sys_pll_psc = {
-	.divm = 4,
-	.divn = 80,
+	.divm = 5,
+	.divn = 192,
 	.divp = 2,
 	.divq = 2,
 	.divr = 2,
@@ -414,9 +421,25 @@ int configure_clocks(struct udevice *dev)
 	/* pll setup, enable it */
 	setbits_le32(&regs->cr, RCC_CR_PLL1ON);
 
-	/* set HPRE (/2) DI clk --> 125MHz */
+	/* set HPRE (/2) DI clk --> 240MHz */
 	clrsetbits_le32(&regs->d1cfgr, RCC_D1CFGR_HPRE_MASK,
 			RCC_D1CFGR_HPRE_DIV2);
+
+	/* set D1PPRE (/2) DI clk --> 120MHz */
+	clrsetbits_le32(&regs->d1cfgr, RCC_D1CFGR_D1PPRE_MASK,
+			RCC_D1CFGR_D1PPRE_DIV2);
+
+	/* set D2PPRE1 (/2) DI clk --> 120MHz */
+	clrsetbits_le32(&regs->d2cfgr, RCC_D2CFGR_D2PPRE1_MASK,
+			RCC_D2CFGR_D2PPRE1_DIV2);
+
+	/* set D2PPRE2 (/2) DI clk --> 120MHz */
+	clrsetbits_le32(&regs->d2cfgr, RCC_D2CFGR_D2PPRE2_MASK,
+			RCC_D2CFGR_D2PPRE2_DIV2);
+
+	/* set D3PPRE (/2) DI clk --> 120MHz */
+	clrsetbits_le32(&regs->d3cfgr, RCC_D3CFGR_D3PPRE_MASK,
+			RCC_D3CFGR_D3PPRE_DIV2);
 
 	/*  select PLL1 as system clock source (sys_ck)*/
 	clrsetbits_le32(&regs->cfgr, RCC_CFGR_SW_MASK, RCC_CFGR_SW_PLL1);
@@ -425,7 +448,7 @@ int configure_clocks(struct udevice *dev)
 
 	/* sdram: use pll1_q as fmc_k clk */
 	clrsetbits_le32(&regs->d1ccipr, RCC_D1CCIPR_FMCSRC_MASK,
-			FMCSRC_PLL1_Q_CK);
+			FMCSRC_HCLKD1);
 
 	return 0;
 }
