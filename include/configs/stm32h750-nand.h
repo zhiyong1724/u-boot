@@ -39,9 +39,7 @@
 #define CONFIG_SYS_NAND_BASE 0x90000000
 #define CONFIG_BOOTCOMMAND \
 	"sf probe; " \
-	"setenv fdt_load_addr 0xc1800000; " \
-	"sf read ${fdt_load_addr} 0x100000 0x8000; " \
-	"setenv image_load_addr 0xc2000000; " \
+	"setenv image_load_addr 0xc3000000; " \
 	"setenv offset 0x200000; " \
 	"setenv index 0; " \
 	"setenv temp 0; " \
@@ -52,7 +50,8 @@
 	"setexpr offset ${offset} + 0x8000; " \
 	"setexpr index ${index} + 0x8000; " \
 	"done; " \
-	"bootm ${image_load_addr} - ${fdt_load_addr}; "
+	"setexpr temp ${image_load_addr} + 0x2c0; " \
+	"go ${temp}; "
 
 /* #include <config_distro_bootcmd.h>
 #define CONFIG_EXTRA_ENV_SETTINGS				\
