@@ -11,6 +11,7 @@
 #include <asm/global_data.h>
 #include <asm/armv7_mpu.h>
 DECLARE_GLOBAL_DATA_PTR;
+#define CPACR (*((volatile uint32_t *)0xe000ed88))
 int dram_init(void)
 {
 	struct udevice *dev;
@@ -58,7 +59,7 @@ int board_init(void)
 int mach_cpu_init(void)
 {
 	int i;
-
+	CPACR |= ((3UL << (10*2))|(3UL << (11*2)));  /* set CP10 and CP11 Full Access */
 	struct mpu_region_config stm32_region_config[] = {
 		/*
 		 * Make SDRAM area cacheable & executable.
